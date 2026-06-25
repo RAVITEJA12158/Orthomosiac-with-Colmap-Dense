@@ -1,0 +1,44 @@
+﻿# --- Ingestion (Stage 1 + 2) ---
+ExifRead>=3.0.0                # read GPS + focal length from JPEG EXIF
+pyexiftool>=0.5.6              # Sequoia / MicaSense XMP radiometric fields (Stage 12)
+Pillow>=10.0.0                 # PIL.Image â€” image loading utility used by LightGlue extractor
+
+# --- Feature extraction & matching (Stage 3 & 4) ---
+torch>=2.2.0                   # ALIKED + LightGlue backbone (install CUDA build separately â€” see installations.md)
+torchvision>=0.17.0            # image loading utilities used by lightglue
+lightglue @ git+https://github.com/cvg/LightGlue.git  # ALIKED extractor + LightGlue matcher (ETH Zurich)
+kornia>=0.7.3                  # image geometry utils required by lightglue
+h5py>=3.10.0                   # .h5 feature / match files written by extractor + matcher
+
+# --- Geometric verification (Stage 5) ---
+poselib>=2.0.0                 # LO-RANSAC + non-linear refinement (replaces COLMAP's built-in RANSAC)
+
+# --- SfM (Stage 6 + 7) ---
+pycolmap>=4.0.4; python_version < "3.14"
+
+# --- Geospatial / raster I/O (Stages 7â€“13) ---
+rasterio>=1.3.0                # read/write georeferenced GeoTIFF files
+GDAL>=3.4.1              # fillnodata, warp, GeoTIFF internals (install pre-built wheel on Windows â€” see installations.md)
+pyproj>=3.6.0                  # CRS transforms (WGS84 â†” UTM)
+affine>=2.4.0                  # Affine transform objects used by tile_loader + ortho footprint
+
+# --- Depth maps / DSM (Stage 8 + 9) ---
+# COLMAP: binary tool - install COLMAP 4.x with CUDA support where available
+scipy>=1.12.0                  # DSM gap fill (distance_transform_edt) + interpolation fallback
+open3d>=0.18.0                 # fast PLY point cloud reading for DSM rasterisation (optional â€” fallback to numpy if missing)
+
+# --- Orthorectification (Stage 10) ---
+numpy>=1.26.0
+cupy-cuda13x>=14.0.0           # GPU backward projection (requires CUDA 12.x â€” optional, falls back to numpy)
+
+# --- Image processing / Mosaicking (Stage 11 + 12) ---
+opencv-contrib-python>=4.9.0   # GainCompensator, GraphCutSeamFinder (graph-cut), MultiBandBlender, ArUco detection
+# NOTE: opencv-contrib-python replaces opencv-python â€” do NOT install both.
+#       cv2.detail_GraphCutSeamFinder('COST_COLOR') requires GCO support that
+#       is only compiled into the contrib wheels, not the standard opencv-python
+#       wheels (omitted upstream for licensing reasons).
+
+# --- Testing ---
+pytest>=9.0.0
+
+
