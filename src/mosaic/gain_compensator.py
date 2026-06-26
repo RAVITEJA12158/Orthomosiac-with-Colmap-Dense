@@ -62,7 +62,10 @@ def compute_gain_maps(
 
     gain_corrected: List[np.ndarray] = []
     for idx, (corner, img, mask) in enumerate(zip(corners, images, masks)):
-        out = compensator.apply(idx, corner, img, mask)
+        # Ensure img and mask are C-contiguous and writeable for OpenCV InputOutputArray
+        img_ready = np.ascontiguousarray(img).copy()
+        mask_ready = np.ascontiguousarray(mask)
+        out = compensator.apply(idx, corner, img_ready, mask_ready)
         if isinstance(out, cv2.UMat):
             out = out.get()
         gain_corrected.append(out.astype(np.uint8))
